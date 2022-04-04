@@ -1,0 +1,14 @@
+#root .castom-map-sign {
+    width: 0;
+    height: 0;
+    border: 0;
+    padding: 0;
+}
+
+#root .castom-map-sign b {
+    display: inline-block;
+    padding: 3px;
+    border: 1px solid #666;
+    border-radius: 3px;
+    background: #fff;
+}
