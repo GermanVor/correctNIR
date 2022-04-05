@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { RequestName } from "./common/requestName";
-import { AIRPORTS } from "./common/const";
+import { AIRPORTS, FLIGHT_ROUTE } from "./common/const";
 import { requestLogger } from "./logger";
 
 dotenv.config();
@@ -21,15 +21,17 @@ connectToDB().then(() => {
         })
     );
 
-    // app.use(requestLogger);
+    app.use(requestLogger);
 
-    app.get(RequestName.GET_AIRPORTS, (_req, res) => {
-        console.log("Biba");
+    app.get(RequestName.GET_AIRPORTS, (_, res) => {
         res.send(AIRPORTS);
     });
 
-    console.log(`⚡️[server]: Try to start server`);
+    app.get(RequestName.GET_FLIGHT_ROUTE, (_, res) => {
+        res.send(FLIGHT_ROUTE);
+    });
 
+    console.log(`⚡️[server]: Try to start server`);
     app.listen(PORT, () => {
         console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
     });
