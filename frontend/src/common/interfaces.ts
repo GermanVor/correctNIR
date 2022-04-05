@@ -5,3 +5,16 @@ export type AirportType = {
     name: string;
     coordinats: CoordinateType;
 };
+
+export type RoutePoint = {
+    id: string;
+    coordinats: CoordinateType;
+};
+
+export type FlightRouteType = {
+    meta: {
+        departureIcao: string;
+        destinationIcao: string;
+    };
+    route: RoutePoint[];
+};

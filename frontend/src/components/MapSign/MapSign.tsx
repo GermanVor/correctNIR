@@ -1,6 +1,6 @@
 import ReactDOMServer from "react-dom/server";
 import L from "leaflet";
-import "./index.css";
+import "./MapSign.css";
 
 export const makeSign = (text: string) => {
     return L.divIcon({
