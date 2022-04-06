@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { RequestName } from "./common/requestName";
-import { AIRPORTS, FLIGHT_ROUTE } from "./common/const";
+import { AIRPORTS, FLIGHT_ROUTE, ROUTES_PLAN_TYPE } from "./common/const";
 import { requestLogger } from "./logger";
 
 dotenv.config();
@@ -20,15 +20,20 @@ connectToDB().then(() => {
             changeOrigin: true,
         })
     );
-
+    app.use(express.json());
+    app.use(express.urlencoded());
     app.use(requestLogger);
 
     app.get(RequestName.GET_AIRPORTS, (_, res) => {
         res.send(AIRPORTS);
     });
 
-    app.get(RequestName.GET_FLIGHT_ROUTE, (_, res) => {
+    app.post<{}, {}, { routeId: string }>(RequestName.GET_FLIGHT_ROUTE, (req, res) => {
         res.send(FLIGHT_ROUTE);
+    });
+
+    app.get(RequestName.GET_ROUTES_PLAN, (_, res) => {
+        res.send(ROUTES_PLAN_TYPE);
     });
 
     console.log(`⚡️[server]: Try to start server`);

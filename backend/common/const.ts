@@ -1,4 +1,4 @@
-import { AirportType, FlightRouteType } from "./interfaces";
+import { AirportType, FlightRouteType, RoutesPlanType } from "./interfaces";
 
 export const AIRPORTS: AirportType[] = [
     {
@@ -44,4 +44,9 @@ export const FLIGHT_ROUTE: FlightRouteType = {
             coordinats: [59.8003, 30.2625],
         },
     ],
+};
+
+export const ROUTES_PLAN_TYPE: RoutesPlanType = {
+    routeList: [{ routeId: "qweqwe", departure: AIRPORTS[0], destination: AIRPORTS[1] }],
+    size: 1,
 };
