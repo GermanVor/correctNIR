@@ -24,7 +24,7 @@ export const Airports = () => {
     return (
         <React.Fragment>
             {airportsData.data?.map(({ name, coordinats, icao }, i) => (
-                <Marker position={coordinats} icon={makeSign(name)}>
+                <Marker position={coordinats} icon={makeSign(name)} key={i}>
                     <Popup>{name}</Popup>
                 </Marker>
             ))}

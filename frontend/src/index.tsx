@@ -7,7 +7,9 @@ import "./index.css";
 import { MapContainer } from "react-leaflet";
 import { LatLngExpression } from "leaflet";
 
+
 const spb: LatLngExpression = [59.95, 30.33];
+
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <MapContainer center={spb} zoom={12}>

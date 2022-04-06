@@ -4,12 +4,23 @@ import { RequestName } from "../common/requestName";
 import { useFetchData } from "../service";
 import { FlightRouteType } from "../common/interfaces";
 
-export function VectorLayersExample() {
+type VectorLayersExampleProps = {
+    routeId: string;
+};
+export function Route({ routeId }: VectorLayersExampleProps) {
     const [route, fetchRouteState] = useFetchData<FlightRouteType>(RequestName.GET_FLIGHT_ROUTE);
 
     React.useEffect(() => {
-        fetchRouteState();
-    }, [fetchRouteState]);
+        fetchRouteState({
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({
+                routeId,
+            }),
+        });
+    }, [fetchRouteState, routeId]);
 
     if (route.data)
         return (

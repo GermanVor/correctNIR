@@ -17,42 +17,48 @@ type FetchDataType<DataType> = {
 };
 
 export const useFetchData = <RequestResponse = void>(
-    requestType: RequestName
-): [FetchDataType<RequestResponse>, () => Promise<FetchDataType<RequestResponse>>] => {
+    requestType: RequestName | string
+): [
+    FetchDataType<RequestResponse>,
+    (_?: RequestInit) => Promise<FetchDataType<RequestResponse>>
+] => {
     const [fetchState, setFetchState] = React.useState<FetchDataType<RequestResponse>>({
         status: FetchDataStatus.Initial,
     });
 
-    const fetchData = React.useCallback(() => {
-        setFetchState({ status: FetchDataStatus.Loading });
+    const fetchData = React.useCallback(
+        (requestInit?: RequestInit) => {
+            setFetchState({ status: FetchDataStatus.Loading });
 
-        return fetch(requestType)
-            .then<FetchDataType<RequestResponse>>((response) => {
-                if (response.ok) {
-                    return response.json().then((data: RequestResponse) => ({
-                        status: FetchDataStatus.Loaded,
-                        data,
-                    }));
-                } else {
-                    return {
-                        status: FetchDataStatus.Error,
-                        error: {
-                            statusText: response.statusText,
-                        },
-                    };
-                }
-            })
-            .catch(() => ({
-                status: FetchDataStatus.Error,
-                error: {
-                    statusText: "inner error",
-                },
-            }))
-            .then((state) => {
-                setFetchState(state);
-                return state;
-            });
-    }, [requestType]);
+            return fetch(requestType, requestInit)
+                .then<FetchDataType<RequestResponse>>((response) => {
+                    if (response.ok) {
+                        return response.json().then((data: RequestResponse) => ({
+                            status: FetchDataStatus.Loaded,
+                            data,
+                        }));
+                    } else {
+                        return {
+                            status: FetchDataStatus.Error,
+                            error: {
+                                statusText: response.statusText,
+                            },
+                        };
+                    }
+                })
+                .catch(() => ({
+                    status: FetchDataStatus.Error,
+                    error: {
+                        statusText: "inner error",
+                    },
+                }))
+                .then((state) => {
+                    setFetchState(state);
+                    return state;
+                });
+        },
+        [requestType]
+    );
 
     return [fetchState, fetchData];
 };

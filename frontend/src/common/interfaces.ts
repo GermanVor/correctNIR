@@ -18,3 +18,14 @@ export type FlightRouteType = {
     };
     route: RoutePoint[];
 };
+
+type RouteListItemType = {
+    routeId: string;
+    departure: AirportType;
+    destination: AirportType;
+};
+
+export type RoutesPlanType = {
+    routeList: RouteListItemType[];
+    size: number;
+};
