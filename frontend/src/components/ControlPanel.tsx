@@ -4,7 +4,8 @@ import { RoutesPlanType } from "../common/interfaces";
 
 import { useFetchData } from "../service";
 import { useMap } from "react-leaflet";
-// import { Route } from "./Route";
+import { Route } from "./Route";
+import { FlightObserver } from "./FlightObserver";
 
 export const ControlPanel = () => {
     const [{ data }, fetchRoutesPlan] = useFetchData<RoutesPlanType>(RequestName.GET_ROUTES_PLAN);
@@ -31,6 +32,12 @@ export const ControlPanel = () => {
                     ))}
                 </div>
             </div>
+            {data?.routeList.map(({ flightId }, i) => (
+                <Route flightId={flightId} key={`r-${i}`} />
+            ))}
+            {data?.routeList.map(({ flightId }, i) => (
+                <FlightObserver flightId={flightId} key={`fo-${i}`} />
+            ))}
         </React.Fragment>
     );
 };

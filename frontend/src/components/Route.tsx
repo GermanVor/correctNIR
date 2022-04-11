@@ -5,28 +5,26 @@ import { useFetchData } from "../service";
 import { FlightRouteType } from "../common/interfaces";
 
 type VectorLayersExampleProps = {
-    routeId: string;
+    flightId: string;
 };
-export function Route({ routeId }: VectorLayersExampleProps) {
-    const [route, fetchRouteState] = useFetchData<FlightRouteType>(RequestName.GET_FLIGHT_ROUTE);
+export function Route({ flightId }: VectorLayersExampleProps) {
+    const [{ data: routeData }, fetchRouteState] = useFetchData<FlightRouteType>(
+        RequestName.GET_FLIGHT_ROUTE
+    );
 
     React.useEffect(() => {
-        fetchRouteState({
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json;charset=utf-8",
-            },
-            body: JSON.stringify({
-                routeId,
-            }),
-        });
-    }, [fetchRouteState, routeId]);
+        fetchRouteState(
+            JSON.stringify({
+                flightId,
+            })
+        );
+    }, [fetchRouteState, flightId]);
 
-    if (route.data)
+    if (routeData)
         return (
             <Polyline
                 pathOptions={{ color: "red" }}
-                positions={route.data.route.map(({ coordinats }) => coordinats)}
+                positions={routeData.coordinateList.map(({ coordinates }) => coordinates)}
             />
         );
     else return null;

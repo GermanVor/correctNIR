@@ -3,12 +3,12 @@ export type CoordinateType = [number, number];
 export type AirportType = {
     icao: string;
     name: string;
-    coordinats: CoordinateType;
+    coordinates: CoordinateType;
 };
 
 export type RoutePoint = {
     id: string;
-    coordinats: CoordinateType;
+    coordinates: CoordinateType;
 };
 
 export type FlightRouteType = {
@@ -16,11 +16,11 @@ export type FlightRouteType = {
         departureIcao: string;
         destinationIcao: string;
     };
-    route: RoutePoint[];
+    coordinateList: RoutePoint[];
 };
 
 type RouteListItemType = {
-    routeId: string;
+    flightId: string;
     departure: AirportType;
     destination: AirportType;
 };
