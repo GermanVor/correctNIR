@@ -23,13 +23,27 @@ body {
 
     margin: 10px;
     cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
 }
 
 .ControlPanelContent {
-    width: 100%;
-    height: 100%;
-
     margin: 20px;
+    flex: 1 0 auto;
+}
 
+.RouteItem {
+    margin: 5px;
+    font-size: 17px;
+    line-height: 24px;
+}
+
+.RouteItemLine {
     display: flex;
+    justify-content: space-between;
+}
+
+.RouteItemTime {
+    font-size: 12px;
 }

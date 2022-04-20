@@ -21,8 +21,13 @@ export type FlightRouteType = {
 
 type RouteListItemType = {
     flightId: string;
+
     departure: AirportType;
     destination: AirportType;
+
+    distance: number;
+    departureTime: number;
+    destinationTime: number;
 };
 
 export type RoutesPlanType = {

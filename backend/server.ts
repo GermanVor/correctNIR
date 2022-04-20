@@ -2,9 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { RequestName } from "./common/requestName";
-import { AIRPORTS, FLIGHT_ROUTE, ROUTES_PLAN_TYPE } from "./common/const";
+import { AIRPORTS, FLIGHT_ROUTE, ROUTES_PLAN_TYPE, MIDDLE_PLANE_SPEED } from "./common/const";
 import { requestLogger } from "./logger";
-import { SimulateFlight } from "./flightSimulator";
+import { simulateFlight } from "./flightSimulator";
 
 dotenv.config();
 const PORT = process.env.SERVER_PORT || 8080;
@@ -13,8 +13,16 @@ const connectToDB = () => new Promise<void>((res) => res());
 
 connectToDB().then(() => {
     // ------
-    let exempleFlightRoute = SimulateFlight(FLIGHT_ROUTE.coordinateList);
+
+    let exempleFlightRoute = simulateFlight(
+        FLIGHT_ROUTE.coordinateList.map(({ coordinates }) => coordinates)
+    );
     let i = 0;
+
+    ROUTES_PLAN_TYPE.routeList[0].departureTime = new Date().getTime();
+    ROUTES_PLAN_TYPE.routeList[0].destinationTime =
+        ROUTES_PLAN_TYPE.routeList[0].departureTime +
+        (ROUTES_PLAN_TYPE.routeList[0].distance / MIDDLE_PLANE_SPEED) * 3600000;
 
     // ------
 
@@ -43,10 +51,7 @@ connectToDB().then(() => {
         res.send(FLIGHT_ROUTE);
     });
 
-
-
     app.post<{}, {}, { flightId: string }>(RequestName.GET_FlIGHT_POSITION, (_, res) => {
-        console.log(i, exempleFlightRoute.length)
         if (i === exempleFlightRoute.length) {
             i = 0;
         }

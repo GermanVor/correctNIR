@@ -1,4 +1,9 @@
+import { getRouteDistance } from "../flightSimulator";
 import { AirportType, FlightRouteType, RoutesPlanType } from "./interfaces";
+
+export const EARTH_R = 6371;
+
+export const MIDDLE_PLANE_SPEED = 700;
 
 export const AIRPORTS: AirportType[] = [
     {
@@ -47,6 +52,17 @@ export const FLIGHT_ROUTE: FlightRouteType = {
 };
 
 export const ROUTES_PLAN_TYPE: RoutesPlanType = {
-    routeList: [{ flightId: "qweqwe", departure: AIRPORTS[0], destination: AIRPORTS[1] }],
+    routeList: [
+        {
+            flightId: "qweqwe",
+            departure: AIRPORTS[0],
+            destination: AIRPORTS[1],
+            distance: getRouteDistance(
+                FLIGHT_ROUTE.coordinateList.map(({ coordinates }) => coordinates)
+            ),
+            departureTime: 0,
+            destinationTime: 1,
+        },
+    ],
     size: 1,
 };

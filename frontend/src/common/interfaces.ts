@@ -19,10 +19,15 @@ export type FlightRouteType = {
     coordinateList: RoutePoint[];
 };
 
-type RouteListItemType = {
+export type RouteListItemType = {
     flightId: string;
+
     departure: AirportType;
     destination: AirportType;
+
+    distance: number;
+    departureTime: number;
+    destinationTime: number;
 };
 
 export type RoutesPlanType = {

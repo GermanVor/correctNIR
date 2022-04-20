@@ -1,14 +1,15 @@
 {
-  "name": "nir",
-  "version": "1.0.0",
-  "description": "NIR",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "German Vor",
-  "license": "ISC",
-  "devDependencies": {
-    "prettier": "2.6.2"
-  }
+    "name": "nir",
+    "version": "1.0.0",
+    "description": "NIR",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "sync": "cp -a ./backend/common/ ./frontend/src/common/ && rm ./frontend/src/common/const.ts"
+    },
+    "author": "German Vor",
+    "license": "ISC",
+    "devDependencies": {
+        "prettier": "2.6.2"
+    }
 }
