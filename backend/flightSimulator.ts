@@ -1,9 +1,16 @@
-import { FLIGHT_ROUTE, EARTH_R } from "./common/const";
-import { CoordinateType, RoutePoint } from "./common/interfaces";
+import {
+    EARTH_R,
+    FLIGHT_ROUTE,
+    HOUR,
+    MIDDLE_PLANE_SPEED,
+    PLANE_INFO,
+    ROUTES_PLAN_TYPE,
+} from "./common/const";
+import { CoordinateType, PlaneInfoType } from "./common/interfaces";
 
-const STEP_LONG = 0.2;
+const STEP_LONG = 0.1;
 
-export const simulateFlight = (route: CoordinateType[]) => {
+const simulateFlight = (route: CoordinateType[]) => {
     const flightPlan: CoordinateType[] = [route[0]];
 
     route.reduce((a, b) => {
@@ -41,6 +48,86 @@ export const simulateFlight = (route: CoordinateType[]) => {
     return flightPlan;
 };
 
+export const getRouteDistance = (route: CoordinateType[]) => {
+    let res = 0;
+
+    route.reduce((a, b) => {
+        res += getDistance(a, b);
+        return b;
+    });
+
+    return res;
+};
+
+const getRandomInt = (min: number, max: number) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+export class SimulatorClass {
+    _flightRoutes: Record<string, CoordinateType[]> = {};
+    _flightRoutesIdx: Record<string, number> = {};
+
+    _buildRoute = (flightId: string) => {
+        this._flightRoutes[flightId] = simulateFlight(
+            FLIGHT_ROUTE[flightId].coordinateList.map(({ coordinates }) => coordinates)
+        );
+
+        this._flightRoutesIdx[flightId] = 0;
+    };
+
+    _getIdx = (flightId: string) => {
+        if (this._flightRoutes[flightId].length === this._flightRoutesIdx[flightId]) {
+            this._flightRoutesIdx[flightId] = 0;
+        }
+
+        return this._flightRoutesIdx[flightId];
+    };
+
+    getRoutesPlan = () => {
+        ROUTES_PLAN_TYPE.routeList.forEach(({ flightId }, i) => {
+            ROUTES_PLAN_TYPE.routeList[i].distance = getRouteDistance(
+                FLIGHT_ROUTE[flightId].coordinateList.map(({ coordinates }) => coordinates)
+            );
+
+            const nowTime = new Date().getTime();
+
+            ROUTES_PLAN_TYPE.routeList[i].departureTime = getRandomInt(
+                nowTime - HOUR,
+                nowTime + HOUR
+            );
+            ROUTES_PLAN_TYPE.routeList[i].destinationTime =
+                ROUTES_PLAN_TYPE.routeList[i].departureTime +
+                (ROUTES_PLAN_TYPE.routeList[i].distance / MIDDLE_PLANE_SPEED) * HOUR;
+        });
+
+        return ROUTES_PLAN_TYPE;
+    };
+
+    getCoordinates = (flightId: string) => {
+        if (this._flightRoutes[flightId] === undefined) {
+            this._buildRoute(flightId);
+        }
+
+        const idx = this._getIdx(flightId);
+        const allRoute = this._flightRoutes[flightId];
+
+        const coordinates = allRoute[idx];
+
+        ++this._flightRoutesIdx[flightId];
+
+        return coordinates;
+    };
+
+    getPlaneInfo = (planeId: string): PlaneInfoType => {
+        const speed = PLANE_INFO[planeId].groundSpeed;
+
+        return { ...PLANE_INFO[planeId], groundSpeed: getRandomInt(speed - 5, speed + 5) };
+    };
+}
+
 export const deg2rad = (deg: number) => deg * (Math.PI / 180);
 
 export const getDistance = (startPoint: CoordinateType, endPoint: CoordinateType) => {
@@ -62,15 +149,4 @@ export const getDistance = (startPoint: CoordinateType, endPoint: CoordinateType
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return EARTH_R * c;
-};
-
-export const getRouteDistance = (route: CoordinateType[]) => {
-    let res = 0;
-
-    route.reduce((a, b) => {
-        res += getDistance(a, b);
-        return b;
-    });
-
-    return res;
 };

@@ -22,6 +22,8 @@ export type FlightRouteType = {
 type RouteListItemType = {
     flightId: string;
 
+    planeId: string;
+
     departure: AirportType;
     destination: AirportType;
 
@@ -33,4 +35,14 @@ type RouteListItemType = {
 export type RoutesPlanType = {
     routeList: RouteListItemType[];
     size: number;
+    pageTocken?: string;
+};
+
+export type PlaneInfoType = {
+    planeId: string;
+    name: string;
+    registration: string;
+
+    groundSpeed: number;
+    calibratedAltitude: number;
 };
