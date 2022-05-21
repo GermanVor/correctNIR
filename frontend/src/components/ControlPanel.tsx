@@ -1,53 +1,90 @@
 import React from "react";
 import { RequestName } from "../common/requestName";
-import { RouteListItemType, RoutesPlanType } from "../common/interfaces";
+import { DomEvent } from "leaflet";
+import { PlaneInfoType, RouteListItemType, RoutesPlanType } from "../common/interfaces";
 
-import { useFetchData } from "../service";
-import { useMap } from "react-leaflet";
+import { useFetchData, useRefresher } from "../service";
 import { Route } from "./Route";
 import { FlightObserver } from "./FlightObserver";
 import { formateDate } from "../common/functions";
 
+type PlaneCardProps = {
+    planeId: string;
+};
+const PlaneInfo = ({ planeId }: PlaneCardProps) => {
+    const [{ data: planeData }, fetchLastFlightPosition] = useFetchData<PlaneInfoType>(
+        RequestName.GET_PLANE_INFO,
+        true
+    );
+
+    const refresher = useRefresher();
+
+    React.useEffect(() => {
+        refresher.callback = () => {
+            fetchLastFlightPosition({ planeId });
+        };
+
+        refresher.start();
+    }, []);
+
+    if (!planeData) return null;
+    return (
+        <div className="PlaneCard">
+            <span>{`AIRCRAFT TYPE: ${planeData.name}`}</span>
+            <span>{`REGISTRATION: ${planeData.registration}`}</span>
+            <span>{`GROUND SPEED: ${planeData.groundSpeed} km/h`}</span>
+            <span>{`CALIBRATED ALTITUDE: ${planeData.calibratedAltitude} m`}</span>
+        </div>
+    );
+};
+
+type RouteItemProps = RouteListItemType & {};
 const RouteItem = ({
     departure,
     destination,
     departureTime,
     destinationTime,
-}: RouteListItemType) => (
-    <div className="RouteItem">
-        <div className="RouteItemLine">
-            <span>{departure.name}</span>
-            <span>{" -> "}</span>
-            <span>{destination.name}</span>
-        </div>
-        <div className="RouteItemLine RouteItemTime">
-            <span>{formateDate(departureTime)}</span>
-            <span>{formateDate(destinationTime)}</span>
-        </div>
-    </div>
-);
+    flightId,
+    planeId,
+}: RouteItemProps) => {
+    const [isActiveRoute, setActiveRoute] = React.useState(false);
 
-type RouteObserverProps = Pick<RoutesPlanType, "routeList">;
-const RouteListObserver = ({ routeList }: RouteObserverProps) => (
-    <React.Fragment>
-        {routeList.map(({ flightId }, i) => (
-            <Route flightId={flightId} />
-        ))}
-    </React.Fragment>
-);
+    const toggleRouteItem = React.useCallback(() => {
+        setActiveRoute((prevActiveState) => !prevActiveState);
+    }, []);
 
-type FlightListObserverProps = Pick<RoutesPlanType, "routeList">;
-const FlightListObserver = ({ routeList }: FlightListObserverProps) => (
-    <React.Fragment>
-        {routeList.map(({ flightId }, i) => (
-            <FlightObserver flightId={flightId} key={`fo-${i}`} />
-        ))}
-    </React.Fragment>
-);
+    const currentClassName = "RouteItem " + (isActiveRoute ? "RouteItem_active" : "");
+
+    return (
+        <React.Fragment>
+            <div className={currentClassName} onClick={toggleRouteItem}>
+                <div className="RouteItemLine">
+                    <span className="RouteItemLine__Name" title={departure.name}>
+                        {departure.name}
+                    </span>
+                    <span className="RouteItemLine__Separator">{"->"}</span>
+                    <span className="RouteItemLine__Name" title={destination.name}>
+                        {destination.name}
+                    </span>
+                </div>
+                <div className="RouteItemLine RouteItemTime">
+                    <span>{formateDate(departureTime)}</span>
+                    <span>{formateDate(destinationTime)}</span>
+                </div>
+                {isActiveRoute && <PlaneInfo planeId={planeId} />}
+            </div>
+            {isActiveRoute && (
+                <React.Fragment>
+                    <Route flightId={flightId} />
+                    <FlightObserver flightId={flightId} />
+                </React.Fragment>
+            )}
+        </React.Fragment>
+    );
+};
 
 export const ControlPanel = () => {
     const [{ data }, fetchRoutesPlan] = useFetchData<RoutesPlanType>(RequestName.GET_ROUTES_PLAN);
-    const map = useMap();
 
     React.useEffect(() => {
         fetchRoutesPlan();
@@ -57,11 +94,8 @@ export const ControlPanel = () => {
         <React.Fragment>
             <div
                 className="ControlPanel"
-                onMouseDown={() => {
-                    map.dragging.disable();
-                }}
-                onMouseUp={() => {
-                    map.dragging.enable();
+                ref={(ref) => {
+                    if (ref) DomEvent.disableClickPropagation(ref);
                 }}
             >
                 <div className="ControlPanelContent">
@@ -70,12 +104,6 @@ export const ControlPanel = () => {
                     ))}
                 </div>
             </div>
-            {data && (
-                <React.Fragment>
-                    <RouteListObserver routeList={data.routeList} />
-                    <FlightListObserver routeList={data.routeList} />
-                </React.Fragment>
-            )}
         </React.Fragment>
     );
 };

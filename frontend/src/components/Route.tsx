@@ -13,11 +13,9 @@ export function Route({ flightId }: VectorLayersExampleProps) {
     );
 
     React.useEffect(() => {
-        fetchRouteState(
-            JSON.stringify({
-                flightId,
-            })
-        );
+        fetchRouteState({
+            flightId,
+        });
     }, [fetchRouteState, flightId]);
 
     if (routeData)

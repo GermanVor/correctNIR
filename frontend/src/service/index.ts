@@ -17,18 +17,16 @@ type FetchDataType<DataType> = {
 };
 
 export const useFetchData = <RequestResponse = void>(
-    requestType: RequestName | string
-): [
-    FetchDataType<RequestResponse>,
-    (_?: BodyInit) => Promise<FetchDataType<RequestResponse>>
-] => {
+    requestType: RequestName | string,
+    silent?: boolean
+): [FetchDataType<RequestResponse>, (_?: Object) => Promise<FetchDataType<RequestResponse>>] => {
     const [fetchState, setFetchState] = React.useState<FetchDataType<RequestResponse>>({
         status: FetchDataStatus.Initial,
     });
 
     const fetchData = React.useCallback(
-        (body?: BodyInit) => {
-            setFetchState({ status: FetchDataStatus.Loading });
+        (body?: Object) => {
+            if (!silent) setFetchState({ status: FetchDataStatus.Loading });
 
             return fetch(
                 requestType,
@@ -38,7 +36,7 @@ export const useFetchData = <RequestResponse = void>(
                           headers: {
                               "Content-Type": "application/json;charset=utf-8",
                           },
-                          body,
+                          body: JSON.stringify(body),
                       }
                     : undefined
             )
@@ -85,9 +83,11 @@ export const useRefresher = (callback: () => any = () => {}): RefresherType => {
     const intervalId = React.useRef<NodeJS.Timer>();
 
     const refresher = React.useRef<RefresherType>({
-        timeout: 100,
+        timeout: 1500,
         callback,
         start: () => {
+            refresher.current.callback();
+
             intervalId.current = setInterval(() => {
                 refresher.current.callback();
             }, refresher.current.timeout);
@@ -96,6 +96,8 @@ export const useRefresher = (callback: () => any = () => {}): RefresherType => {
             if (intervalId.current) clearInterval(intervalId.current);
         },
     });
+
+    React.useEffect(() => () => refresher.current.stop(), []);
 
     return refresher.current;
 };
