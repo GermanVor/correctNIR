@@ -2,6 +2,19 @@ body {
     margin: 0;
 }
 
+.Button {
+    width: fit-content;
+    margin: 4px 6px;
+
+    border: 1px solid rgba(0, 0, 0, 0.2);
+
+    transition-duration: 100ms;
+}
+
+.Button:hover {
+    transform: scale(1.1);
+}
+
 .leaflet-container {
     height: 100vh;
     overflow: hidden;
@@ -86,4 +99,19 @@ body {
 
     display: flex;
     flex-direction: column;
+}
+
+.PlaneCard__CoordWrapper {
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+
+    display: flex;
+    align-items: center;
+}
+
+.PlaneCard__Coord {
+    margin-left: 5px;
+}
+
+.PlaneCard__CoordGo {
+    margin-left: auto;
 }
