@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { RequestName } from "./common/requestName";
-import { AIRPORTS, FLIGHT_ROUTE, PLANE_INFO } from "./common/const";
 import { requestLogger } from "./logger";
 import { SimulatorClass } from "./flightSimulator";
 
@@ -28,7 +27,7 @@ connectToDB().then(() => {
     app.use(requestLogger);
 
     app.get(RequestName.GET_AIRPORTS, (_, res) => {
-        res.send(AIRPORTS);
+        res.send(simulator.getAirports());
     });
 
     app.get(RequestName.GET_ROUTES_PLAN, (_, res) => {
@@ -38,7 +37,7 @@ connectToDB().then(() => {
     app.post<{}, {}, { flightId: string }>(
         RequestName.GET_FLIGHT_ROUTE,
         ({ body: { flightId } }, res) => {
-            res.send(FLIGHT_ROUTE[flightId]);
+            res.send(simulator.getFlightRoute(flightId));
         }
     );
 

@@ -1,4 +1,5 @@
 import {
+    AIRPORTS,
     EARTH_R,
     FLIGHT_ROUTE,
     HOUR,
@@ -123,8 +124,21 @@ export class SimulatorClass {
 
     getPlaneInfo = (planeId: string): PlaneInfoType => {
         const speed = PLANE_INFO[planeId].groundSpeed;
+        const calibratedAltitude = PLANE_INFO[planeId].calibratedAltitude;
 
-        return { ...PLANE_INFO[planeId], groundSpeed: getRandomInt(speed - 5, speed + 5) };
+        return {
+            ...PLANE_INFO[planeId],
+            groundSpeed: getRandomInt(speed - 5, speed + 5),
+            calibratedAltitude: getRandomInt(calibratedAltitude - 3, calibratedAltitude + 3),
+        };
+    };
+
+    getFlightRoute = (flightId: string) => {
+        return FLIGHT_ROUTE[flightId];
+    };
+
+    getAirports = () => {
+        return AIRPORTS;
     };
 }
 
