@@ -1,3 +1,3 @@
 NIR
 
-![image](https://user-images.githubusercontent.com/43282255/162847729-99d0ed27-9003-48b9-b70f-c55666d98f2e.png)
+<img width="1706" alt="image" src="https://user-images.githubusercontent.com/43282255/169672215-5d9e81aa-8e6c-4f8e-a629-bce5b35ca269.png">
